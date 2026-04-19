@@ -1,0 +1,49 @@
+/* Google Fonts must come before @tailwind directives */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0F1115;
+    color: #E6E8EB;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', sans-serif;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #0F1115; }
+  ::-webkit-scrollbar-thumb { background: #1E2530; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #5C6773; }
+}
+
+@layer components {
+  .btn-pill {
+    @apply flex items-center gap-2 px-4 py-2 rounded-pill text-sm font-medium transition-all duration-150;
+  }
+
+  .section-tag {
+    @apply font-mono text-[10px] tracking-[0.2em] text-accent uppercase mb-4 block;
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(circle, #1E2530 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
