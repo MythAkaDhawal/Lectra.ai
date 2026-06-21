@@ -39,7 +39,7 @@ export default function OutputScreen({ data, onBack, onCopy, onDownloadPdf, copy
       <div className="flex-1 max-w-6xl w-full mx-auto px-8 py-10 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10 items-start">
 
         {/* ── Left: Main content ── */}
-        <div ref={printRef} className="flex flex-col gap-10">
+        <div ref={printRef} className="flex flex-col gap-10 bg-bg p-6 md:p-10 rounded-lg">
 
           {/* Title block */}
           <div className="flex flex-col gap-2">
@@ -56,7 +56,7 @@ export default function OutputScreen({ data, onBack, onCopy, onDownloadPdf, copy
           </div>
 
           {/* Action bar */}
-          <div className="flex gap-3">
+          <div className="flex gap-3" data-html2canvas-ignore="true">
             <ActionButton onClick={onDownloadPdf} id="download-pdf-btn">
               <DownloadIcon /> Download PDF
             </ActionButton>

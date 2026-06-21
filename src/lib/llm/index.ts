@@ -43,6 +43,16 @@ Respond with ONLY a valid JSON object matching this exact schema (no markdown fe
 
 Rules: 3-6 note sections (2-5 bullets each), 3-5 key takeaways, valid Mermaid syntax only.`;
 
+/** Clean markdown code blocks / fences from LLM responses if present */
+export function cleanJsonString(str: string): string {
+  let cleaned = str.trim();
+  if (cleaned.startsWith("```")) {
+    cleaned = cleaned.replace(/^```(?:json)?\n?/i, "");
+    cleaned = cleaned.replace(/\n?```$/, "");
+  }
+  return cleaned.trim();
+}
+
 // ─── Factory ─────────────────────────────────────────────────
 
 import { GroqProvider } from "./groq";

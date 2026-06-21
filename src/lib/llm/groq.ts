@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 import type { LLMProvider, GeneratedNotes } from "./index";
-import { NOTES_SYSTEM_PROMPT } from "./index";
+import { NOTES_SYSTEM_PROMPT, cleanJsonString } from "./index";
 
 export class GroqProvider implements LLMProvider {
   name = "Groq (llama-3.3-70b)";
@@ -29,6 +29,6 @@ export class GroqProvider implements LLMProvider {
     const content = completion.choices[0]?.message?.content;
     if (!content) throw new Error("Empty response from Groq");
 
-    return JSON.parse(content) as GeneratedNotes;
+    return JSON.parse(cleanJsonString(content)) as GeneratedNotes;
   }
 }

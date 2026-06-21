@@ -85,7 +85,7 @@ export default function MermaidDiagram({ chart }: Props) {
           fontSize: "13px",
           padding: "20px 0",
         }}>
-          <div className="pulse-dot" />
+          <div className="w-2.5 h-2.5 rounded-full bg-accent animate-pulse-dot" />
           Rendering diagram...
         </div>
       )}

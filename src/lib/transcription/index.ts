@@ -26,11 +26,12 @@ export type TranscriptionProviderName = "whisper" | "mock";
 
 export function getTranscriptionProvider(): TranscriptionProvider {
   const hasKey = Boolean(process.env.OPENAI_API_KEY);
+  const isNvidia = hasKey && process.env.OPENAI_API_KEY!.startsWith("nvapi-");
 
-  // Explicit override via env var, or auto-fallback to mock when key is missing
+  // Explicit override via env var, or auto-fallback to mock when key is missing or Nvidia key is detected
   const requested =
     (process.env.TRANSCRIPTION_PROVIDER as TranscriptionProviderName | undefined) ??
-    (hasKey ? "whisper" : "mock");
+    (hasKey && !isNvidia ? "whisper" : "mock");
 
   switch (requested) {
     case "whisper":
@@ -43,6 +44,11 @@ export function getTranscriptionProvider(): TranscriptionProvider {
       return new WhisperProvider(process.env.OPENAI_API_KEY!);
 
     case "mock":
+      if (isNvidia) {
+        console.warn(
+          "[Lectra] NVIDIA API key detected in OPENAI_API_KEY. Since NVIDIA's cloud catalog does not support OpenAI-compatible audio transcriptions, falling back to the mock transcription provider. To run real transcription, please configure a standard OpenAI API key (starting with 'sk-')."
+        );
+      }
       return new MockTranscriptionProvider();
 
     default:

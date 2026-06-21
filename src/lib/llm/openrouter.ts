@@ -1,5 +1,5 @@
 import type { LLMProvider, GeneratedNotes } from "./index";
-import { NOTES_SYSTEM_PROMPT } from "./index";
+import { NOTES_SYSTEM_PROMPT, cleanJsonString } from "./index";
 
 /**
  * OpenRouter provider — drop-in swap for Groq.
@@ -55,6 +55,6 @@ export class OpenRouterProvider implements LLMProvider {
     const content = json.choices?.[0]?.message?.content;
     if (!content) throw new Error("Empty response from OpenRouter");
 
-    return JSON.parse(content) as GeneratedNotes;
+    return JSON.parse(cleanJsonString(content)) as GeneratedNotes;
   }
 }

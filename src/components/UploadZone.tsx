@@ -86,7 +86,12 @@ export default function UploadZone({ onFileSelect, selectedFile, onClear, disabl
         onDragLeave={() => setDragging(false)}
         onDrop={handleDrop}
         onClick={() => !disabled && inputRef.current?.click()}
-        onKeyDown={(e) => e.key === "Enter" && !disabled && inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if ((e.key === "Enter" || e.key === " ") && !disabled) {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         className={[
           "dot-grid flex flex-col items-center gap-2.5 py-12 px-8 rounded-lg cursor-pointer",
           "border border-dashed transition-all duration-200 select-none",

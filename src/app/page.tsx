@@ -90,9 +90,19 @@ export default function Home() {
     const w = pdf.internal.pageSize.getWidth();
     const h = (canvas.height * w) / canvas.width;
     let y = 0;
+    const pageW = pdf.internal.pageSize.getWidth();
     const pageH = pdf.internal.pageSize.getHeight();
+    let isFirst = true;
     while (y < h) {
-      if (y > 0) pdf.addPage();
+      if (!isFirst) {
+        pdf.addPage();
+      }
+      isFirst = false;
+
+      // Fill background color #0F1115
+      pdf.setFillColor(15, 17, 21);
+      pdf.rect(0, 0, pageW, pageH, "F");
+
       pdf.addImage(img, "PNG", 0, -y, w, h);
       y += pageH;
     }
