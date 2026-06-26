@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lectra
 
-## Getting Started
+Lectra turns lecture audio into structured study notes, summaries, key takeaways, and Mermaid diagrams. It is a Next.js app with server-side API routes for audio transcription and note generation.
 
-First, run the development server:
+## Features
+
+- Upload lecture audio from the browser.
+- Optionally provide topic context for the lecture.
+- Transcribe audio through the configured transcription provider.
+- Generate organized notes, a short summary, key takeaways, and a Mermaid concept diagram.
+- Copy generated notes as Markdown or export the rendered result as a PDF.
+
+## Tech stack
+
+- Next.js 16 and React 19
+- TypeScript
+- Tailwind CSS
+- OpenAI Whisper for transcription when `OPENAI_API_KEY` is configured
+- Groq or OpenRouter for note generation when the matching API key is configured
+- Mock providers as local fallbacks when provider keys are not configured
+
+## Getting started
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a local environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+Then edit `.env.local` with the providers you want to use. The app can run without keys by falling back to mock providers, but real transcription and note generation require provider credentials.
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Provider configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Transcription is controlled by `TRANSCRIPTION_PROVIDER`:
 
-## Learn More
+- `whisper` uses `OPENAI_API_KEY`.
+- `mock` returns sample transcription output for local UI testing.
 
-To learn more about Next.js, take a look at the following resources:
+Note generation is controlled by `LLM_PROVIDER`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `groq` uses `GROQ_API_KEY`.
+- `openrouter` uses `OPENROUTER_API_KEY`.
+- `mock` returns sample notes for local UI testing.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If provider variables are omitted, Lectra chooses the first available configured provider and falls back to mock providers when needed.
 
-## Deploy on Vercel
+## Useful scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev    # Start the local development server
+npm run build  # Create a production build
+npm run start  # Start the production server
+npm run lint   # Run ESLint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Privacy note
+
+When mock providers are selected, no external AI provider is used. When Whisper, Groq, or OpenRouter providers are selected, uploaded audio or generated transcripts are sent to the configured provider APIs for processing.
