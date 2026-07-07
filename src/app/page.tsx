@@ -1,10 +1,19 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import type { AppData, AppState } from "@/types";
+import type { ApiErrorResponse, AppData, AppState, GenerateResponse, TranscriptionResponse } from "@/types";
 import InputScreen from "@/components/InputScreen";
 import LoadingScreen from "@/components/LoadingScreen";
 import OutputScreen from "@/components/OutputScreen";
+
+async function getErrorMessage(response: Response, fallback: string): Promise<string> {
+  try {
+    const body = (await response.json()) as Partial<ApiErrorResponse>;
+    return body.error ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export default function Home() {
   const [state, setState] = useState<AppState>("input");
@@ -26,10 +35,9 @@ export default function Home() {
 
       const transcribeRes = await fetch("/api/transcribe", { method: "POST", body: form });
       if (!transcribeRes.ok) {
-        const { error } = await transcribeRes.json();
-        throw new Error(error ?? "Transcription failed");
+        throw new Error(await getErrorMessage(transcribeRes, "Transcription failed"));
       }
-      const { transcript } = await transcribeRes.json();
+      const { transcript } = (await transcribeRes.json()) as TranscriptionResponse;
 
       setState("generating");
       const generateRes = await fetch("/api/generate", {
@@ -38,10 +46,9 @@ export default function Home() {
         body: JSON.stringify({ transcript, topic: topic.trim() }),
       });
       if (!generateRes.ok) {
-        const { error } = await generateRes.json();
-        throw new Error(error ?? "Generation failed");
+        throw new Error(await getErrorMessage(generateRes, "Generation failed"));
       }
-      const generated = await generateRes.json();
+      const generated = (await generateRes.json()) as GenerateResponse;
 
       setData({ ...generated, wordCount: transcript.split(/\s+/).length, topic: topic.trim() || undefined });
       setState("output");
