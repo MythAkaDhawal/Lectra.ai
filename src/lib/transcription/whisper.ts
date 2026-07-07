@@ -7,13 +7,8 @@ export class WhisperProvider implements TranscriptionProvider {
   private model: string;
 
   constructor(apiKey: string) {
-    const isNvidia = apiKey.startsWith("nvapi-");
-    const baseURL = isNvidia ? "https://integrate.api.nvidia.com/v1" : undefined;
-    this.client = new OpenAI({ apiKey, baseURL });
-    this.model = process.env.TRANSCRIPTION_MODEL ?? (isNvidia ? "nvidia/whisper-large-v3" : "whisper-1");
-    if (isNvidia) {
-      this.name = "NVIDIA Whisper";
-    }
+    this.client = new OpenAI({ apiKey });
+    this.model = process.env.TRANSCRIPTION_MODEL ?? "whisper-1";
   }
 
   async transcribe(file: File): Promise<TranscriptionResult> {
