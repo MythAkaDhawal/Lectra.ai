@@ -1,7 +1,7 @@
 /**
  * LLM Provider Interface
  * Swap the active provider by changing LLM_PROVIDER in .env.local
- * Supported: "groq" | "openrouter" | "mock"
+ * Supported: "groq" | "openai" | "openrouter" | "mock"
  */
 
 export interface NoteSection {
@@ -55,40 +55,28 @@ export function cleanJsonString(str: string): string {
 
 // ─── Factory ─────────────────────────────────────────────────
 
+import { getConfiguredLLMProvider, requireEnv } from "@/lib/env";
 import { GroqProvider } from "./groq";
 import { OpenRouterProvider } from "./openrouter";
+import { OpenAIProvider } from "./openai";
 import { MockLLMProvider } from "./mock";
 
-export type LLMProviderName = "groq" | "openrouter" | "mock";
+export type LLMProviderName = "groq" | "openai" | "openrouter" | "mock";
 
 export function getLLMProvider(): LLMProvider {
-  const hasGroq = Boolean(process.env.GROQ_API_KEY);
-  const hasOpenRouter = Boolean(process.env.OPENROUTER_API_KEY);
-
-  const requested =
-    (process.env.LLM_PROVIDER as LLMProviderName | undefined) ??
-    (hasGroq ? "groq" : hasOpenRouter ? "openrouter" : "mock");
+  const requested = getConfiguredLLMProvider();
 
   switch (requested) {
     case "groq":
-      if (!hasGroq) {
-        console.warn("[Lectra] GROQ_API_KEY missing — falling back to mock LLM");
-        return new MockLLMProvider();
-      }
-      return new GroqProvider(process.env.GROQ_API_KEY!);
+      return new GroqProvider(requireEnv("GROQ_API_KEY", "LLM"));
+
+    case "openai":
+      return new OpenAIProvider(requireEnv("OPENAI_API_KEY", "LLM"));
 
     case "openrouter":
-      if (!hasOpenRouter) {
-        console.warn("[Lectra] OPENROUTER_API_KEY missing — falling back to mock LLM");
-        return new MockLLMProvider();
-      }
-      return new OpenRouterProvider(process.env.OPENROUTER_API_KEY!);
+      return new OpenRouterProvider(requireEnv("OPENROUTER_API_KEY", "LLM"));
 
     case "mock":
-      return new MockLLMProvider();
-
-    default:
-      console.warn(`[Lectra] Unknown LLM provider "${requested}" — using mock`);
       return new MockLLMProvider();
   }
 }
