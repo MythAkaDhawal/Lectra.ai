@@ -20,6 +20,18 @@ export interface TranscriptionResult {
   provider?: string;
 }
 
+export interface ApiErrorResponse {
+  error: string;
+}
+
+export interface TranscriptionResponse extends TranscriptionResult {
+  provider: string;
+}
+
+export interface GenerateResponse extends GeneratedNotes {
+  provider: string;
+}
+
 export type AppState = "input" | "transcribing" | "generating" | "output" | "error";
 
 export interface AppData extends GeneratedNotes {
