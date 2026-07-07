@@ -5,9 +5,11 @@ import { NOTES_SYSTEM_PROMPT, cleanJsonString } from "./index";
 export class GroqProvider implements LLMProvider {
   name = "Groq (llama-3.3-70b)";
   private client: Groq;
+  private model: string;
 
   constructor(apiKey: string) {
     this.client = new Groq({ apiKey });
+    this.model = process.env.GROQ_LLM_MODEL ?? "llama-3.3-70b-versatile";
   }
 
   async generateNotes(transcript: string, topic?: string): Promise<GeneratedNotes> {
@@ -16,7 +18,7 @@ export class GroqProvider implements LLMProvider {
       : `Transcript:\n${transcript}`;
 
     const completion = await this.client.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: this.model,
       messages: [
         { role: "system", content: NOTES_SYSTEM_PROMPT },
         { role: "user", content: userContent },
