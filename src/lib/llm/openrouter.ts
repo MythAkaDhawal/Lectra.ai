@@ -1,6 +1,14 @@
 import type { LLMProvider, GeneratedNotes } from "./index";
 import { NOTES_SYSTEM_PROMPT, cleanJsonString } from "./index";
 
+interface OpenRouterCompletion {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+}
+
 /**
  * OpenRouter provider — drop-in swap for Groq.
  * Set LLM_PROVIDER=openrouter and OPENROUTER_API_KEY in .env.local.
@@ -51,7 +59,7 @@ export class OpenRouterProvider implements LLMProvider {
       throw new Error(`OpenRouter error ${res.status}: ${text}`);
     }
 
-    const json = await res.json();
+    const json = (await res.json()) as OpenRouterCompletion;
     const content = json.choices?.[0]?.message?.content;
     if (!content) throw new Error("Empty response from OpenRouter");
 
